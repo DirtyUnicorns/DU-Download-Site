@@ -1,7 +1,7 @@
 version: "3.1"
 services:
   dusite:
-    image: du_download_site:latest
+    image: jmzsoftware/du_download_site:latest
     container_name: dusite
     restart: unless-stopped
     env_file:
