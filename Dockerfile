@@ -44,6 +44,9 @@ COPY --chown=nobody src/ /var/www/html/
 # Run composer install to install the dependencies
 RUN composer install --optimize-autoloader --no-interaction --no-progress
 
+# Remove composer binary
+RUN rm /usr/bin/composer
+
 # Expose the port nginx is reachable on
 EXPOSE 8080
 
