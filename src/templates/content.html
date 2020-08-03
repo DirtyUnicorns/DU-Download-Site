@@ -23,6 +23,7 @@
         <thead>
         <tr>
             <th scope="col">File</th>
+            <th scope="col">Upload Date</th>
             <th scope="col">Size</th>
             <th scope="col">MD5</th>
             <th scope="col">Downloads</th>
@@ -32,7 +33,8 @@
         {% for file in files %}
         {% if file.fileType == fileType.id %}
         <tr>
-            <td><a class="link" href="../download/{{ file.id }}">{{ file.baseName }}</a></td>
+            <td><a class="link" href="../download?filename={{ file.fileName }}">{{ file.baseName }}</a></td>
+            <td>{{ file.date }}</td>
             <td>{{ file.fileSize }}</td>
             <td>{{ file.MD5 }}</td>
             <td>{{ file.downloadCount }}</td>

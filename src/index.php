@@ -37,10 +37,11 @@ Flight::route('/', function(){
     ]);
 });
 
-Flight::route('/device/@id', function($id){
+Flight::route('/device/@device', function($device){
+    $id = getDeviceId($device);
     echo Flight::get("twig")->render('content.html', [
         'devices' => getAllDevices(),
-        'selected_name' => getDeviceName($id),
+        'selected_name' => $device,
         'fileTypes' => getReleaseTypesForDevice($id),
         'files' => getFilesForDevice($id),
         'site_url' => getenv("SITE_URL"),
@@ -48,9 +49,9 @@ Flight::route('/device/@id', function($id){
     ]);
 });
 
-Flight::route('/download/@id', function($id){
-    updateDownload($id);
-    getDownload($id);
+Flight::route('/download/*', function(){
+    updateDownload($_GET['filename']);
+    getDownload($_GET['filename']);
 });
 
 Flight::route('/api/devices', function(){

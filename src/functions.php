@@ -66,9 +66,6 @@ function getFilesForDeviceApi($id) {
  */
 function getAllDevices() {
     $text = DB::query("SELECT * FROM devices ORDER BY deviceName ASC");
-    for ($i=0; $i < count($text); $i++) {
-        $text[$i]['deviceName'] = ucfirst($text[$i]['deviceName']);
-    }
     return $text;
 }
 
@@ -192,8 +189,9 @@ function countFilesForDevice($id) {
  */
 function addFile($device, $fileType, $file) {
     $md5 = md5_file($file, false);
-    DB::query("INSERT INTO files SET `fileName`=%s, `MD5`=%s, `fileSize`=%s, `deviceName`=%d, `fileType`=%d, `baseName`=%s",
-        $file,
+    DB::query("INSERT INTO files SET `fileName`=%s, `date`=%s, `MD5`=%s, `fileSize`=%s, `deviceName`=%d, `fileType`=%d, `baseName`=%s",
+        str_replace("devices/", "", $file),
+        date ("m-d-Y", filemtime($file)),
         $md5,
         human_filesize(filesize($file)),
         getDeviceId($device),
@@ -318,20 +316,20 @@ function getReleaseTypesForDevice($deviceId) {
 /**
  * Increments download count for file
  *
- * @param int $fileId
+ * @param string $file
  */
-function updateDownload($fileId) {
-    DB::query("UPDATE files SET downloadCount = downloadCount + 1 WHERE id=%d", $fileId);
+function updateDownload($file) {
+    DB::query("UPDATE files SET downloadCount = downloadCount + 1 WHERE fileName=%s", $file);
 }
 
 /**
  * Processes file for download
  *
- * @param int $fileId
+ * @param string $file
  */
-function getDownload($fileId) {
-    $file_url = DB::query("SELECT fileName, baseName FROM files WHERE id=%d", $fileId)[0];
-    $filePath = $file_url['fileName'];
+function getDownload($file) {
+    $file_url = DB::query("SELECT fileName, baseName FROM files WHERE fileName=%s", $file)[0];
+    $filePath = "devices/" . $file_url['fileName'];
     $fileName = $file_url['baseName'];
 
     if(file_exists($filePath)) {
@@ -342,7 +340,7 @@ function getDownload($fileId) {
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Cache-Control: private', false);
         header('Content-Transfer-Encoding: binary');
-        header('Content-Type: application/zip');
+        header('Content-Type: multipart/mixed');
         header("Content-Length: ".$fileSize);
         header("Content-Disposition: attachment; filename=".$fileName);
 

@@ -14,6 +14,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - SLACK_WEBHOOK=${SLACK_WEBHOOK}
       - SLACK_TOKEN=${SLACK_TOKEN}
+      - DB_HOST=${DB_HOST}
   mariadb:
     image: mariadb:latest
     container_name: mariadb
