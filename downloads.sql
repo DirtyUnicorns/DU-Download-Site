@@ -11,7 +11,8 @@ CREATE TABLE `files` (
   `fileSize` text NOT NULL,
   `deviceName` int(11) NOT NULL,
   `fileType` int(11) NOT NULL,
-  `baseName` text DEFAULT NULL
+  `baseName` text DEFAULT NULL,
+  `date` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `releaseTypes` (
