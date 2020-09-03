@@ -18,9 +18,8 @@
 
 require 'vendor/autoload.php';
 
-DB::$user = getenv('MYSQL_USER');
-DB::$password = getenv('MYSQL_PASSWORD');
-DB::$dbName = getenv('MYSQL_DATABASE');
-DB::$host = getenv('DB_HOST');
+DB::$user = "nobody";
+DB::$dbName = "downloads";
+DB::$host = "localhost";
 $slack_webhook_url = getenv("SLACK_WEBHOOK");
 $slack_token = getenv("SLACK_TOKEN");

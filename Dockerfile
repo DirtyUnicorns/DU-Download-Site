@@ -5,7 +5,7 @@ LABEL Maintainer="James Taylor <jmz.taylor16@gmail.com>" \
 # Install packages and remove default server definition
 RUN apk --no-cache add php7 php7-fpm php7-opcache php7-mysqli php7-json php7-openssl php7-curl \
     php7-zlib php7-xml php7-phar php7-intl php7-dom php7-xmlreader php7-ctype php7-session \
-    php7-mbstring php7-gd nginx supervisor curl && \
+    php7-mbstring php7-gd nginx supervisor curl mariadb mariadb-client mariadb-server-utils && \
     rm /etc/nginx/conf.d/default.conf
 
 # Install composer from the official image
@@ -24,11 +24,17 @@ COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Setup document root
 RUN mkdir -p /var/www/html
 
+# Copy initial DB structure
+COPY downloads.sql /downloads.sql
+RUN mysql_install_db --user=nobody --datadir=/var/lib/mysql
+RUN mkdir -p /run/mysqld
+
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
 RUN chown -R nobody.nobody /var/www/html && \
   chown -R nobody.nobody /run && \
   chown -R nobody.nobody /var/lib/nginx && \
-  chown -R nobody.nobody /var/log/nginx
+  chown -R nobody.nobody /var/lib/mysql && \
+  chown -R nobody.nobody /downloads.sql
 
 # Copy cron
 COPY cron.sh /etc/periodic/15min/cron
@@ -41,16 +47,27 @@ USER nobody
 WORKDIR /var/www/html
 COPY --chown=nobody src/ /var/www/html/
 
+# Create application SQL structure
+RUN /bin/ash -c "/usr/bin/mysqld_safe --skip-grant-tables &" && \
+  sleep 5 && \
+  mysql -unobody -e "CREATE DATABASE downloads" && \
+  mysql -unobody downloads < /downloads.sql
+
 # Run composer install to install the dependencies
 RUN composer install --optimize-autoloader --no-interaction --no-progress
 
 # Remove composer binary
 USER root
 RUN rm /usr/bin/composer
+RUN rm /downloads.sql
+RUN chown -R nobody.nobody /var/lib/mysql
 USER nobody
 
 # Expose the port nginx is reachable on
 EXPOSE 8080
+
+# Ensure /var/lib/mysql is exposed as VOLUME
+VOLUME  /var/lib/mysql
 
 # Let supervisord start nginx & php-fpm
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
