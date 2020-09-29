@@ -135,6 +135,7 @@ function deleteFile($file) {
  */
 function doesFileExist($file) {
     $results = DB::query("SELECT fileName, MD5 FROM files");
+    $file = str_replace("devices/", "", $file);
     for ($i=0; $i < count($results); $i++) {
         if ($results[$i]['fileName'] == $file) {
             if ($results[$i]['MD5'] != md5_file($file)) {
