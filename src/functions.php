@@ -157,7 +157,7 @@ function doesFileExist($file) {
 function cleanFiles() {
     $results = DB::query("SELECT fileName FROM files");
     foreach ($results as $file) {
-        if (!file_exists($file['fileName'])) {
+        if (!file_exists('devices/' . $file['fileName'])) {
             DB::query("DELETE FROM files WHERE fileName=%s", $file['fileName']);
         }
     }
