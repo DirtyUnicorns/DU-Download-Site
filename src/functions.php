@@ -140,13 +140,13 @@ function doesFileExist($file) {
         if ($results[$i]['fileName'] == $file) {
             if ($results[$i]['MD5'] != md5_file($file)) {
                 deleteFile($file);
-                return false;
+                return 0;
             } else {
-                return true;
+                return 1;
             }
         }
     }
-    return false;
+    return 2;
 }
 
 /**
@@ -288,7 +288,7 @@ function getDeviceFiles($device) {
             foreach ($iterator as $file) {
                 if (!$file->isDot()) {
                     $file = str_replace($docRoot, "", $file->getPathname());
-                    if (!doesFileExist($file)) {
+                    if (doesFileExist($file) == 0) {
                         $text = $text . "Found new file: " . $file . PHP_EOL;
                         addFile($device, $releaseType['types'], $file);
                     }
