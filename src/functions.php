@@ -138,7 +138,7 @@ function doesFileExist($file) {
     $file = str_replace("devices/", "", $file);
     for ($i=0; $i < count($results); $i++) {
         if ($results[$i]['fileName'] == $file) {
-            if ($results[$i]['MD5'] != md5_file($file)) {
+            if ($results[$i]['MD5'] != md5_file("devices/" . $file)) {
                 deleteFile($file);
                 return 0;
             } else {
