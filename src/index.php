@@ -49,6 +49,12 @@ Flight::route('/device/@device', function($device){
     ]);
 });
 
+Flight::route('/stats', function($device){
+    echo Flight::get("twig")->render('stats.html', [
+        'stats' => getStats()
+    ]);
+});
+
 Flight::route('/download/*', function(){
     updateDownload($_GET['filename']);
     getDownload($_GET['filename']);

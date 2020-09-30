@@ -315,6 +315,15 @@ function getReleaseTypesForDevice($deviceId) {
 }
 
 /**
+ * Gets all files for stats
+ *
+ * @return array
+ */
+function getStats() {
+    return DB::query("SELECT t1.baseName, t1.downloadCount, t2.deviceName FROM files t1 INNER JOIN devices t2 ON t1.deviceName = t2.id ORDER BY deviceName");
+}
+
+/**
  * Increments download count for file
  *
  * @param string $file
