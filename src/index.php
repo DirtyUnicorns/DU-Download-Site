@@ -51,6 +51,7 @@ Flight::route('/device/@device', function($device){
 
 Flight::route('/stats', function(){
     echo Flight::get("twig")->render('stats.html', [
+        'devices' => getAllDevices(),
         'stats' => getStats()
     ]);
 });
